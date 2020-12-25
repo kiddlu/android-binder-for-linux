@@ -10,5 +10,5 @@ for sym in $SYMS; do
 	fi
 
 	name=`echo $sym | tr '[:lower:]' '[:upper:]'`
-	echo "#define $name\t(void *)0x$addr"
+	echo "#define $name (void *)0x$addr"
 done

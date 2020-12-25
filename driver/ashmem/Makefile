@@ -1,19 +1,21 @@
-ccflags-y += -I$(src)
+KERNELDIR ?= /lib/modules/$(shell uname -r)/build
 
-ifneq ($(KERNELRELEASE),)
-obj-m := ashmem_linux.o
-ashmem_linux-y := deps.o ashmem.o
+PWD := $(shell pwd)
 
-$(obj)/deps.o: $(src)/deps.h
+obj-m		:= ashmem_mod.o
+ashmem_mod-y    := deps.o ashmem.o
 
-$(obj)/deps.h: $(src)/gen_deps.sh
-	sudo $(src)/gen_deps.sh > $@
-else
-KERNEL_SRC ?= /lib/modules/$(shell uname -r)/build
+all: deps.h modules
 
-all:
-	$(MAKE) -C $(KERNEL_SRC) V=0 M=$$PWD
+.PHONY: deps.h
+deps.h:
+	sudo bash $(PWD)/gen_deps.sh > $@
 
+.PHONY: modules
+modules:
+	$(MAKE) -C $(KERNELDIR) M=$(PWD) modules
+
+.PHONY: clean
 clean:
-	rm -rf deps.h *.o *.ko *.mod.c *.symvers *.order .*.cmd .tmp_versions
-endif
+	rm -rf deps.h *.o *.ko *.mod.c *.symvers *.order .*.cmd .tmp_versions .cache.mk
+
