@@ -1,9 +1,25 @@
+# To build modules outside of the kernel tree, we run "make"
+# in the kernel source tree; the Makefile these then includes this
+# Makefile once again.
+# This conditional selects whether we are being included from the
+# kernel Makefile or not.
+
+# called from kernel build system: just declare what our modules are
+ccflags-y += -I$(src)			# needed for trace events
+obj-m		:= ashmem_linux.o
+ashmem_linux-y    := deps.o ashmem.o
+
+CROSS_COMPILE = 
+
+CC = gcc
+
+
+# Assume the source tree is where the running kernel was built
+# You should set KERNELDIR in the environment if it's elsewhere
 KERNELDIR ?= /lib/modules/$(shell uname -r)/build
 
+# The current directory is passed to sub-makes as argument
 PWD := $(shell pwd)
-
-obj-m		:= ashmem_mod.o
-ashmem_mod-y    := deps.o ashmem.o
 
 all: deps.h modules
 

@@ -54,7 +54,7 @@ void binder_dump_txn(struct binder_transaction_data *txn)
     while (count--) {
         obj = (struct flat_binder_object *) (((char*)(uintptr_t)txn->data.ptr.buffer) + *offs++);
         fprintf(stderr,"  - type %08x  flags %08x  ptr %016"PRIx64"  cookie %016"PRIx64"\n",
-                obj->type, obj->flags, (uint64_t)obj->binder, (uint64_t)obj->cookie);
+                obj->hdr.type, obj->flags, (uint64_t)obj->binder, (uint64_t)obj->cookie);
     }
 }
 
@@ -497,7 +497,7 @@ void bio_put_obj(struct binder_io *bio, void *ptr)
         return;
 
     obj->flags = 0x7f | FLAT_BINDER_FLAG_ACCEPTS_FDS;
-    obj->type = BINDER_TYPE_BINDER;
+    obj->hdr.type = BINDER_TYPE_BINDER;
     obj->binder = (uintptr_t)ptr;
     obj->cookie = 0;
 }
@@ -515,7 +515,7 @@ void bio_put_ref(struct binder_io *bio, uint32_t handle)
         return;
 
     obj->flags = 0x7f | FLAT_BINDER_FLAG_ACCEPTS_FDS;
-    obj->type = BINDER_TYPE_HANDLE;
+    obj->hdr.type = BINDER_TYPE_HANDLE;
     obj->handle = handle;
     obj->cookie = 0;
 }
@@ -632,7 +632,7 @@ uint32_t bio_get_ref(struct binder_io *bio)
     if (!obj)
         return 0;
 
-    if (obj->type == BINDER_TYPE_HANDLE)
+    if (obj->hdr.type == BINDER_TYPE_HANDLE)
         return obj->handle;
 
     return 0;

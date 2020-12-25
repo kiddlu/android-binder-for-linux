@@ -33,4 +33,5 @@ modules:
 
 .PHONY: clean
 clean:
-	rm -rf *.o *~ core .depend *.symvers .*.cmd *.ko *.mod.c .tmp_versions $(TARGET)
+	rm -rf deps.h *.o *.ko *.mod.c *.symvers *.order .*.cmd .tmp_versions .cache.mk *.ur-safe
+
